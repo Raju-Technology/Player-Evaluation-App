@@ -1,0 +1,221 @@
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: #f3efef;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  z-index: 1000;
+}
+
+.navbar__logo {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.navbar__logo img{
+  width: 200px;
+}
+
+.navbar__links {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+}
+
+.navbar__item {
+  margin: 0;
+}
+
+.navbar__link {
+  text-decoration: none;
+  color: #252C35;
+  font-size: 18px;
+}
+
+.navbar__link:hover {
+  text-decoration: underline;
+}
+
+main{
+  padding-top: 90px;
+}
+
+.registration-container {
+  display: flex;
+  justify-content: center;
+  min-height: 100vh; 
+}
+
+.registration-form h1 {
+  text-align: center;
+}
+
+.form-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.form-control {
+  flex: 2; 
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+.next{
+  width: 150px;
+}
+
+button[type="submit"] {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+button[type="submit"]:hover {
+  background-color: #0056b3;
+}
+
+.login-container{
+  display:flex;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.error-message {
+  color: red;
+  font-weight: bold;
+}
+
+.new-user-button {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.new-user-button a {
+  text-decoration: none;
+  background-color: #52db52;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  display: inline-block;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.new-user-button a:hover {
+  background-color: #0056b3;
+}
+
+hr {
+  border: none; 
+  height: 1px; 
+  background-color: #ccc; 
+  margin: 20px 0; 
+}
+
+.stepper{
+  margin-top: 20px;
+}
+
+.image-container {
+  width: 80%;
+  margin: 20px auto; 
+  text-align: center; 
+  display: block; 
+}
+
+.image-container img {
+  width: 100%; 
+  height: auto; 
+  display: block; 
+  margin: 0 auto; 
+}
+
+.done{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  gap: 5px;
+}
+
+.done button{
+  width: 150px;
+  padding: 10px;
+}
+
+@media (max-width: 768px) {
+  /* Reduce button size for smaller screens */
+  .done button {
+    width: 100px; /* Reduce the button width */
+    padding: 5px; /* Reduce the padding */
+    font-size: 14px; /* Adjust font size as needed */
+  }
+  .done{
+    margin-right: 8px;
+  }
+}
+
+.submit{
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  gap: 5px;
+}
+
+.submit button{
+  width: 150px;
+  padding: 10px;
+}
+
+.pathway-container {
+  position: relative; 
+  margin: 0 auto; 
+  width: 80%; 
+  min-height: 100vh; 
+  display: flex;
+  flex-direction: column; 
+  align-items: center; 
+  justify-content: center; 
+  padding: 20px; 
+  background-color: #fff; 
+}
+
+.custom-connector {
+  position: absolute;
+  top: 50%; 
+  left: 50%; 
+  height: 100%;
+  width: 2px;
+  background-color: rgb(33, 150, 243); 
+  transform: translate(-50%); 
+}
+
+.single-vertical-connector {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  height: 100%;
+  width: 2px;
+  background-color: rgb(33, 150, 243); /* Change the color as needed */
+  transform: translateX(-50%);
+}
+
