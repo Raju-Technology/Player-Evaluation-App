@@ -4,13 +4,13 @@ import { blue } from '@mui/material/colors';
 import { styled } from '@mui/material/styles';
 import { db, collection, query, where, getDocs } from "../config";
 
-function Quizzing({ interestedTopics, setActiveStep,setTotalMarks, setDone }) {
+function Quizzing({ interestedTopics, setActiveStep, setTotalMarks, setDone }) {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
+  const [answeredQuestionCount, setAnsweredQuestionCount] = useState(0);
 
   useEffect(() => {
     if (interestedTopics.length > 0) {
-      // Fetch questions for the selected topics
       const fetchQuestions = async () => {
         const topicIds = interestedTopics.map((topic) => topic.id);
         const questionsRef = collection(db, "Quizzing");
@@ -23,14 +23,11 @@ function Quizzing({ interestedTopics, setActiveStep,setTotalMarks, setDone }) {
           fetchedQuestions.push({ id: doc.id, ...doc.data() });
         });
 
-        // Shuffle the questions array to get random questions
         const shuffledQuestions = shuffleArray(fetchedQuestions);
 
-        // Select the first 10 questions
         const selectedQuestions = shuffledQuestions.slice(0, 10);
         setQuestions(selectedQuestions);
 
-        // Initialize answers object
         const initialAnswers = {};
         selectedQuestions.forEach((question) => {
           initialAnswers[question.id] = null;
@@ -42,7 +39,6 @@ function Quizzing({ interestedTopics, setActiveStep,setTotalMarks, setDone }) {
     }
   }, [interestedTopics]);
 
-  // Helper function to shuffle an array
   const shuffleArray = (array) => {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -51,30 +47,31 @@ function Quizzing({ interestedTopics, setActiveStep,setTotalMarks, setDone }) {
     return array;
   };
 
-  // Handle answer selection
   const handleAnswerSelect = (questionId, selectedAnswer) => {
     const updatedAnswers = { ...answers };
     updatedAnswers[questionId] = selectedAnswer;
     setAnswers(updatedAnswers);
+
+    const answeredCount = Object.values(updatedAnswers).filter(answer => answer !== null).length;
+    setAnsweredQuestionCount(answeredCount);
   };
 
-  // Handle submission
   const handleSubmit = () => {
-    // Calculate total marks when the user submits the quiz
-    let total = 0;
-    questions.forEach((question) => {
-      const selectedAnswer = answers[question.id];
-      if (selectedAnswer === question.CorrectAnswer) {
-        total += 10;
-      }
-      console.log("question:", question.Question, "selected Ans: ",selectedAnswer, "correct Answer:", question.CorrectAnswer,"total: ",total)
-    });
-    setTotalMarks(total);
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    if (answeredQuestionCount === 10) {
+      let total = 0;
+      questions.forEach((question) => {
+        const selectedAnswer = answers[question.id];
+        if (selectedAnswer === question.CorrectAnswer) {
+          total += 10;
+        }
+      });
+      setTotalMarks(total);
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    }
   };
 
-  const handlePrev = ()=>{
-    setDone(false)
+  const handlePrev = () => {
+    setDone(false);
   }
 
   const ColorButton = styled(Button)(({ theme }) => ({
@@ -153,10 +150,13 @@ function Quizzing({ interestedTopics, setActiveStep,setTotalMarks, setDone }) {
           </li>
         ))}
       </ul>
-        <div className="submit">
-          <ColorButton onClick={handlePrev}>Previous</ColorButton>
-          <ColorButton onClick={handleSubmit}>Submit</ColorButton>
-        </div>
+      <div className="submit">
+        <ColorButton onClick={handlePrev}>Previous</ColorButton>
+        <ColorButton onClick={handleSubmit} disabled={answeredQuestionCount !== 10} 
+          style={{ backgroundColor: answeredQuestionCount !== 10 ? '#E0E0E0' : blue[600] }}>
+          Submit
+        </ColorButton>
+      </div>
     </div>
   );
 }

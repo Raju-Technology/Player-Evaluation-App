@@ -28,7 +28,6 @@ function Pathway({ totalMarks }) {
       <VerticalTimeline>
         {timelineItems.map((item, index) => (
           <VerticalTimelineElement
-            className="vertical-timeline-element"
             contentStyle={{
               background: totalMarks > 40 && item.no <= 2 ? 'grey' : 'rgb(33, 150, 243)',
               color: '#fff'
@@ -39,7 +38,7 @@ function Pathway({ totalMarks }) {
             iconStyle={{ background: 'rgb(33, 150, 243)', color: '#fff' }}
             key={index}
           >
-            <h3 className="vertical-timeline-element-title">{item.Title}</h3>
+            <h3>{item.Title}</h3>
             <p>{item.Content}</p>
           </VerticalTimelineElement>
         ))}

@@ -41,6 +41,26 @@
   text-decoration: underline;
 }
 
+.navbar__toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.bar {
+  width: 25px;
+  height: 3px;
+  background-color: #252C35;
+  margin: 5px 0;
+}
+
+.navbar__links {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+}
+
 main{
   padding-top: 90px;
 }
@@ -132,15 +152,17 @@ hr {
 }
 
 .stepper{
-  margin-top: 20px;
+  margin-top: -15px;
 }
 
 .image-container {
-  width: 80%;
-  margin: 20px auto; 
+  width: 100%;
+  margin: 20px auto;
   text-align: center; 
   display: block; 
+  margin-bottom: 0;
 }
+
 
 .image-container img {
   width: 100%; 
@@ -163,15 +185,44 @@ hr {
 }
 
 @media (max-width: 768px) {
-  /* Reduce button size for smaller screens */
   .done button {
-    width: 100px; /* Reduce the button width */
-    padding: 5px; /* Reduce the padding */
-    font-size: 14px; /* Adjust font size as needed */
+    width: 100px; 
+    padding: 5px; 
+    font-size: 14px; 
   }
   .done{
     margin-right: 8px;
   }
+  .single-vertical-connector {
+   display:none;
+  }
+  .image-paragraph-container h2{
+    font-size: 20px;
+  }
+  .image-paragraph-container p{
+    font-size: 16px;
+  }
+
+  .navbar__toggle {
+    display: block;
+  }
+
+  .navbar__links {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 70px;
+    left: 0;
+    width: 100%;
+    background: #f3efef;
+  }
+  .navbar.open .navbar__links {
+    display: flex;
+  }
+  .summer-camp-container .paragraph{
+    font-size: 24px;
+  }
+ 
 }
 
 .submit{
@@ -179,6 +230,7 @@ hr {
   justify-content: center;
   margin-top: 20px;
   gap: 5px;
+  margin-bottom: 20px;
 }
 
 .submit button{
@@ -215,7 +267,391 @@ hr {
   left: 50%;
   height: 100%;
   width: 2px;
-  background-color: rgb(33, 150, 243); /* Change the color as needed */
+  background-color: rgb(33, 150, 243); 
   transform: translateX(-50%);
 }
 
+.summer-camp-container{
+    background: #82C5D5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #82C5D5;
+    margin-top: -5px;
+    padding: 12% 0 12% 0;
+}
+
+.summer-camp-container button{
+  background-color: #510AC9;
+  border:none;
+  padding: 15px 35px;
+  color: white;
+  margin-top: 20px;
+}
+
+.summer-camp-container button:hover {
+  background-color: #292D32;
+}
+
+.paragraph{
+  font-size: 42px;
+  color: #fff;
+}
+
+.summerCamp-paragraph{
+  color:#fff;
+}
+
+.image-with-paragraph{
+  position: relative;
+  text-align: left;
+}
+
+.image-paragraph-container {
+  position: absolute;
+  top: 30%;
+  left: 10%;
+  color: #fff;
+  font-size: 32px;
+  width: 80%; 
+}
+
+.footer{
+  margin-top: -15px;
+  background-color: #0C161E;
+  color:#696958;
+  padding:30px;
+}
+
+.slide-from-left {
+  opacity: 0;
+  transform: translateX(-100%); 
+  animation: slideFromLeft 5s ease forwards;
+}
+
+@keyframes slideFromLeft {
+  to {
+    opacity: 1;
+    transform: translateX(0); 
+  }
+}
+
+.learning-pathway{
+  background-color: #0C171F;
+  color: #fff;
+  text-align: center;
+  margin-top: -15px;
+}
+
+.dna-1{
+  padding: 10%;
+}
+
+.dna-1 .paragraph1 {
+   font-size: 38px;
+}
+
+.dna-1 .paragraph2 {
+  color: #45A6CD;
+}
+
+.dna-1 img{
+  margin: 30px auto;
+  width: 100%;
+}
+
+.dna-2{
+  padding: 20px;
+}
+
+.dna-2 .paragraph1 {
+   font-size: 38px;
+}
+
+.dna-2 img{
+  margin: 30px auto;
+  width: 80%;
+}
+
+.dna-3{
+  padding: 20px;
+}
+
+.dna-3 .paragraph1 {
+   font-size: 38px;
+}
+
+.dna-3 img{
+  margin: 30px auto;
+  width: 80%;
+}
+
+.studio{
+  background-color: #101C26;
+  color: #fff;
+  margin-top: -15px;
+  text-align: center;
+}
+
+.studio-container{
+  padding: 30px;
+}
+
+.studio-container .paragraph1{
+  font-size: 38px;
+}
+
+.studio-container .paragraph2 {
+  color: #45A6CD;
+}
+
+.studio-images{
+  width: 95%;
+  margin: 10px auto;
+}
+
+.studio-images .image1{
+  width:30%;
+}
+
+.studio-images .image2{
+  width:33%;
+}
+
+.studio-images .image3{
+  width:30%;
+}
+
+.studio-info{
+  background-color: #000000;
+  color:#fff;
+  text-align: center;
+  height: 100px;
+  margin-top: -30px;
+  margin-bottom: 0;
+}
+
+.studio-info p {
+  padding: 30px;
+  font-size: 28px;
+}
+
+.contact{
+  margin-top: -25px;
+  width:100%;
+  height: 1000px;
+}
+
+.contact .paragraph1{
+  margin-top: 0;
+  color : white;
+  padding-top: 10%;
+  font-size: 40px;
+}
+
+.contact .paragraph2{
+  color : white;
+}
+
+.parent-info{
+  display: flex;
+  align-items: center;
+}
+
+.info{
+  background-color:rgba(60, 68, 79, 0.5);
+  Color: white;
+  width: 42%;
+  margin: 50px auto;
+  height: 600px;
+}
+
+.info h3 {
+  text-align: left;
+  padding-top: 25px;
+  padding-left: 15px;
+}
+
+.headquarters{
+  text-align: left;
+  margin-top: 45px;
+  margin-left: 15px;
+}
+
+.headquarters p {
+  padding-top: 0;
+}
+
+.regional-office{
+  text-align: left;
+  margin-top: 45px;
+  margin-left: 15px;
+}
+
+.connect{
+  text-align: left;
+  margin-top: 45px;
+  margin-left: 15px;
+  padding-bottom: 25px;
+}
+
+.user-info{
+  background-color:rgba(60, 68, 79, 0.5);
+  Color: white;
+  width: 42%;
+  margin: 50px auto;
+  height: 600px;
+}
+
+.user-form {
+  width: 90%;
+  margin: 0 auto; 
+}
+
+.user-form label{
+  display: block;
+  text-align: left;
+  margin-top: 20px;
+}
+
+.user-info h3 {
+  text-align: left;
+  padding-top: 25px;
+  padding-left: 20px;
+}
+
+.user-form input {
+  width: 100%;
+  text-align: left;
+  padding: 15px 0;
+  padding-left: 5px;
+  background-color:rgba(60, 68, 79, 0.5);
+  color:white;
+  border: 1px solid white;
+}
+
+.user-form textarea{
+  width: 100%;
+  text-align: left;
+  resize: none;
+  height: 80px;
+  padding-left: 5px;
+  background-color:rgba(60, 68, 79, 0.5);
+  color:white;
+  border: 1px solid white;
+}
+
+#send-button {
+  background-color:rgba(60, 68, 79, 0.5);
+  color: white; 
+  border: 2px solid white;
+  padding: 15px;
+  width: 60%;
+  margin-top: 20px; 
+  cursor: pointer;
+  float: left; 
+}
+
+.levels{
+  margin-top: -25px;
+  /* width: 100%; */
+  height: auto;
+}
+
+.levels h1{
+  text-align: left;
+  margin-left: 10%;
+  padding-top: 5%;
+  color: white;
+}
+
+.stage-topics{
+  margin-left: 10%;
+}
+
+.stage-topics button{
+  border: none;
+  padding: 40px 40px;
+  width: 26%;
+}
+
+.selected-topics {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 90%;
+  margin: 20px 20%;
+  padding-bottom: 80px;
+}
+
+.selected-topics h2{
+  text-align: left;
+  font-size: 20px;
+  font-weight:500;
+  color: white;
+}
+
+.selected-topics p{
+  text-align: left;
+  color: #BFC5C9;
+}
+
+.topic-card {
+  flex: 0 0 calc(29% - 20px);
+  margin-right:15px;
+}
+
+@media (max-width: 768px) {
+  .stage-topics {
+    margin-right: 20%;
+  }
+
+  .levels{
+    height: auto;
+  }
+
+  .stage-topics button {
+    padding: 20px 20px;
+    width: 26%;
+  }
+
+  .selected-topics {
+    flex-direction: row;
+    width: 90%;
+    margin: 10px 15%;
+    margin-bottom: 15px;
+  }
+
+  .topic-card {
+    flex: 0 0 calc(44.4% - 20px);
+    margin-right: 15px;
+  }
+
+  .info,.user-info{
+    height: 700px;
+  }
+
+  .studio-container{
+    padding: 50px;
+  }
+
+  .studio-container .paragraph1{
+    font-size: 38px;
+    padding-top: 20px;
+  }
+
+  .studio-container .paragraph2{
+    padding-top: 30px;
+    font-size: 20px;
+  }
+
+  .studio-images{
+    padding-top: 20px;
+  }
+
+  .studio-info{
+    height: 180px;
+    margin-bottom: 0;
+  }
+
+}

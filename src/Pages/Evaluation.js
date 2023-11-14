@@ -6,14 +6,15 @@ import ListItemText from '@mui/material/ListItemText';
 import Button from '@mui/material/Button';
 import { blue } from '@mui/material/colors';
 import { styled } from '@mui/material/styles';
-import Box from '@mui/material/Box'; 
+import Box from '@mui/material/Box';
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
-function Evaluation({setDone,interestedTopics,setInterestedTopics,setActiveStep}) {
+function Evaluation({ setDone, interestedTopics, setInterestedTopics, setActiveStep }) {
   const [interestAreas, setInterestAreas] = useState([]);
   const [topics, setTopics] = useState([]);
   const [selectedArea, setSelectedArea] = useState(null);
   const [topicsBackgroundColor, setTopicsBackgroundColor] = useState('white');
+  const [areTopicsSelected, setAreTopicsSelected] = useState(false); // New state variable
 
   useEffect(() => {
     const areasRef = collection(db, "Interested Areas");
@@ -71,11 +72,15 @@ function Evaluation({setDone,interestedTopics,setInterestedTopics,setActiveStep}
       const reorderedTopics = [...topics];
       reorderedTopics.splice(result.source.index, 1);
       setTopics(reorderedTopics);
+
+      setAreTopicsSelected(true); // Indicate that topics are selected
     }
   };
 
-  function handleDone(){
-    setDone(true)
+  function handleDone() {
+    if (areTopicsSelected) {
+      setDone(true);
+    }
   }
 
   function handlePrev() {
@@ -141,7 +146,7 @@ function Evaluation({setDone,interestedTopics,setInterestedTopics,setActiveStep}
           </Box>
         </Box>
         <div>
-        <h2>Interested Topics</h2>
+          <h2>Interested Topics</h2>
           <Droppable droppableId="InterestedTopicsList">
             {(provided, snapshot) => (
               <div
@@ -157,7 +162,7 @@ function Evaluation({setDone,interestedTopics,setInterestedTopics,setActiveStep}
                   backgroundColor: snapshot.isDraggingOver ? "#f0f8ff" : "white"
                 }}
               >
-                
+
                 {interestedTopics.map((topic, index) => (
                   <Draggable key={topic.id} draggableId={topic.id} index={index}>
                     {(provided) => (
@@ -178,12 +183,12 @@ function Evaluation({setDone,interestedTopics,setInterestedTopics,setActiveStep}
           </Droppable>
         </div>
         <div className="done">
-            <ColorButton onClick={handlePrev} variant="contained">
-              Previous
-            </ColorButton>
-            <ColorButton onClick={handleDone} variant="contained">
-              Done
-            </ColorButton>
+          <ColorButton onClick={handlePrev} variant="contained">
+            Previous
+          </ColorButton>
+          <ColorButton onClick={handleDone} variant="contained" disabled={!areTopicsSelected}>
+            Done
+          </ColorButton>
         </div>
       </div>
     </DragDropContext>
