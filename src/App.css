@@ -67,19 +67,25 @@ main{
 
 .registration-container {
   display: flex;
-  justify-content: center;
-  min-height: 100vh; 
+  justify-content:space-around;
+  min-height: 100%; 
 }
 
 .registration-form h1 {
   text-align: center;
 }
 
+
 .form-group {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin: 20px auto;
+}
+
+.form-group textarea{
+  resize: none;
+  height: 80px;
 }
 
 .form-group label {
@@ -102,12 +108,14 @@ main{
 
 button[type="submit"] {
   width: 100%;
-  padding: 10px;
-  background-color: #007bff;
+  padding: 7px;
+  background-color: #526681;
   color: #fff;
   border: none;
-  border-radius: 3px;
+  border-radius: 10px;
   cursor: pointer;
+  font-size: large;
+  margin-bottom: 20px;
 }
 
 button[type="submit"]:hover {
@@ -132,7 +140,7 @@ button[type="submit"]:hover {
 
 .new-user-button a {
   text-decoration: none;
-  background-color: #52db52;
+  background-color: #526681;
   color: #fff;
   padding: 10px 20px;
   border-radius: 5px;
@@ -307,6 +315,49 @@ hr {
   text-align: left;
 }
 
+.ai{
+  position:relative;
+  text-align: left;
+  margin-top: -5px;
+}
+
+.ai-container{
+  position: absolute;
+  top: 20%;
+  left: 10%;
+  color: #fff;
+  font-size: 32px;
+  width: 80%;
+}
+
+.cloud{
+  position:relative;
+  text-align: left;
+}
+
+.cloud-container{
+  position: absolute;
+  top: 20%;
+  left: 10%;
+  color: #fff;
+  font-size: 32px;
+  width: 80%;
+}
+
+.robotics{
+  position:relative;
+  text-align: left;
+}
+
+.robotics-container{
+  position: absolute;
+  top: 20%;
+  left: 10%;
+  color: #fff;
+  font-size: 32px;
+  width: 80%;
+}
+
 .image-paragraph-container {
   position: absolute;
   top: 30%;
@@ -323,16 +374,40 @@ hr {
   padding:30px;
 }
 
-.slide-from-left {
+.hover-effect:hover .slide-from-left {
   opacity: 0;
   transform: translateX(-100%); 
-  animation: slideFromLeft 5s ease forwards;
+  animation: slideFromLeft 1s ease forwards;
 }
 
 @keyframes slideFromLeft {
   to {
     opacity: 1;
     transform: translateX(0); 
+  }
+}
+
+.hover-effect:hover .slide-right {
+  transform: translateX(100%);
+  animation: slideFromTop 1s ease forwards;
+}
+
+@keyframes slideFromTop {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hover-effect:hover .slide-down {
+  transform: translateY(-100%);
+  animation: slideFromTop 1s ease forwards;
+}
+
+@keyframes slideFromTop {
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -601,6 +676,105 @@ hr {
   margin-right:15px;
 }
 
+.dashboard-content {
+  display: flex;
+  flex-wrap: wrap; 
+}
+
+.organization-container{
+  width: 16%;
+}
+
+.address-container {
+  width: 16%;
+}
+
+.mobile-container{
+  width: 16%;
+}
+
+.speciality-container{
+  width: 19%;
+}
+
+.details-container{
+  width: 17%;
+}
+
+.unique-container{
+  width: 16%;
+}
+
+.data-container {
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  height: 120px; /* Set a fixed height for the containers */
+  width: 90%;
+  overflow: hidden; 
+}
+
+.data-inner-container {
+  height: 100%;
+  overflow-y: auto; /* Enable vertical scrolling */
+}
+
+/* Add this CSS to style the scroll bar */
+.data-inner-container::-webkit-scrollbar {
+  width: 0;
+}
+
+/* .data-inner-container::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 4px;
+}
+
+.data-inner-container::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+} */
+
+.error-msg {
+  margin: 30px auto;
+  text-align: center;
+}
+
+.error-msg button{
+  padding: 15px 50px;
+  border-radius: 12px;
+  border-width: 0;
+  background-color: #0036b3;
+  color: #fff;
+}
+
+.service-content{
+  display: flex;
+  flex-wrap: wrap; 
+  /* margin-left: 30px; */
+}
+
+.id-container{
+  width: 10%;
+}
+
+.name-container{
+  width: 40%;
+}
+
+.service-count{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.service-container {
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  height: 70px; /* Set a fixed height for the containers */
+  width: 90%;
+  overflow: hidden; 
+}
+
 @media (max-width: 768px) {
   .stage-topics {
     margin-right: 20%;
@@ -654,4 +828,46 @@ hr {
     margin-bottom: 0;
   }
 
+  .ai-container h2{
+    font-size: 20px;
+  }
+
+  .ai-container p{
+    font-size: 15px;
+  }
+
+  .cloud-container h2{
+    font-size: 20px;
+  }
+
+  .cloud-container p{
+    font-size: 15px;
+  }
+
+  .robotics-container h2{
+    font-size: 20px;
+  }
+
+  .robotics-container p{
+    font-size: 15px;
+  }
+
+  .registration-form{
+    width: 90%;
+    background-color: "#3A434E";
+  }
+
+  .organization-container,
+  .address-container,
+  .mobile-container,
+  .speciality-container,
+  .details-container,
+  .unique-container {
+    width: 33.3%;
+  }
+
+  .id-container,
+  .name-container {
+    width: 49%;
+  }
 }

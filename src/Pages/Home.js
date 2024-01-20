@@ -3,6 +3,9 @@ import TechnologyGarageImage1 from "../Images/TechnologyGarageImage1.JPG"
 import TechnologyGarageTour from "../Videos/TechnologyGarageTour.mp4"
 import contacthero from "../Images/contacthero.jpg"
 import TGBanner from "../Images/TGBanner.png"
+import AI from "../Images/AI.png"
+import Cloud from "../Images/Cloud.png"
+import Robotics from "../Images/Robotics.png"
 import { db, collection, getDocs, query, where } from '../config';
 // import Level2 from "./Level2";
 
@@ -96,6 +99,27 @@ function Home() {
       <div className="stepper">
           <div className="image-container">
             <video src={TechnologyGarageTour} autoPlay loop muted playsInline style={{ width: '100%', height: 'auto' }}></video>
+            <div className="ai hover-effect">
+              <img src={AI} alt="AI"/>
+              <div className="ai-container">
+                <h2 className="slide-down">Artificial Intelligence</h2>
+                <p className="slide-down">Artificial Intelligence (AI) is a field of computer science focused on creating machines and systems that can perform tasks requiring human-like intelligence, such as learning.</p>
+              </div>
+            </div>
+            <div className="cloud hover-effect">
+              <img src={Cloud} alt="Cloud"/>
+              <div className="cloud-container">
+                <h2 className="slide-down">Cloud Computing</h2>
+                <p className="slide-down">Cloud computing means storing and accessing the data and programs on remote servers that are hosted on the internet instead of the computer's hard drive or local server</p>
+              </div>
+            </div>
+            <div className="robotics hover-effect">
+              <img src={Robotics} alt="Robotics"/>
+              <div className="robotics-container">
+                <h2 className="slide-down">Robotics</h2>
+                <p className="slide-right">Robotics is an interdisciplinary field that involves the design, construction, operation, and use of robots.</p>
+              </div>
+            </div>
             <div className="summer-camp-container">
               <div>
                 <p className="paragraph">Our <b>Summer Camp</b> enrollment is now open!</p>
@@ -103,9 +127,9 @@ function Home() {
                 <button onClick={handleContactButtonClick}>Contact us now!</button>
               </div>
             </div>
-            <div className="image-with-paragraph">
+            <div className="image-with-paragraph hover-effect">
               <img src={TechnologyGarageImage1} alt="Technology Garage 1" />
-              <div className="image-paragraph-container">
+              <div className="image-paragraph-container ">
                   <h2 className="slide-from-left">Learning Technology Gamified!</h2>
                   <p className="slide-from-left">Kids will like Technology Garage as much as parents do with our gamified approach to teaching technology!</p>
               </div>
@@ -196,7 +220,7 @@ function Home() {
                         <button id="send-button" type="submit">Send now</button>
                       </form>
                     </div>
-                  </div>
+               </div>
                </div>
             </div>
             <div className="footer">

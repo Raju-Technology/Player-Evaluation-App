@@ -8,10 +8,26 @@ function Registration() {
   // Define state variables to hold user input
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [standard, setStandard] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+
+  const hashPassword = (password) => {
+    let hash = 0;
+  
+    if (password.length === 0) {
+      return hash;
+    }
+  
+    for (let i = 0; i < password.length; i++) {
+      const char = password.charCodeAt(i);
+      hash = (hash << 5) - hash + char;
+      hash = hash & hash; // Convert to 32bit integer
+    }
+  
+    return hash.toString();
+  };
 
   // Function to handle form submission
   const handleSubmit = async (e) => {
@@ -25,27 +41,27 @@ function Registration() {
 
     try {
       // Create an object with user data
+      const hashedPassword = hashPassword(password);
       const userData = {
         name,
         phone,
-        standard,
         username,
-        password,
+        password:hashedPassword,
+        adminaccess:"false",
       };
 
       // Add the user data to Firebase Firestore
-      const docRef = await addDoc(collection(db, "users"), userData);
+      const docRef = await addDoc(collection(db, "TgAiUsers"), userData);
       console.log("Document written with ID: ", docRef.id);
 
       // Clear the form after successful registration
       setName("");
       setPhone("");
-      setStandard("");
       setUsername("");
       setPassword("");
       setConfirmPassword("");
 
-      navigate("/")
+      navigate("/login")
     } catch (error) {
       console.error("Error adding document: ", error);
     }
@@ -74,21 +90,6 @@ function Registration() {
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
           />
-        </div>
-        <div className="form-group">
-          <label htmlFor="standard">Standard:</label>
-          <select
-            id="standard"
-            className="form-control"
-            value={standard}
-            onChange={(e) => setStandard(e.target.value)}
-          >
-            <option value="6">6th</option>
-            <option value="7">7th</option>
-            <option value="8">8th</option>
-            <option value="9">9th</option>
-            <option value="10">10th</option>
-          </select>
         </div>
         <div className="form-group">
           <label htmlFor="username">Username:</label>

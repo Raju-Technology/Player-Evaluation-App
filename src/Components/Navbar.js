@@ -9,6 +9,10 @@ function Navbar() {
     setIsOpen(!isOpen);
   };
 
+  const closeNavbar = () => {
+    setIsOpen(false);
+  };
+
   return (
     <nav className={`navbar ${isOpen ? "open" : ""}`}>
       <div className="navbar__logo">
@@ -20,19 +24,39 @@ function Navbar() {
         <div className="bar"></div>
       </button>
       <ul className={`navbar__links ${isOpen ? "open" : ""}`}>
-        <li className="navbar__item">
+        <li className="navbar__item" onClick={closeNavbar}>
           <Link to="/" className="navbar__link">
             Home
           </Link>
         </li>
-        <li className="navbar__item">
+        <li className="navbar__item" onClick={closeNavbar}>
           <Link to="/learningpathway" className="navbar__link">
             Learning Pathways
           </Link>
         </li>
-        <li className="navbar__item">
+        <li className="navbar__item" onClick={closeNavbar}>
           <Link to="/studio" className="navbar__link">
             Our Studio
+          </Link>
+        </li>
+        <li className="navbar__item" onClick={closeNavbar}>
+          <Link to="/form" className="navbar__link">
+            Form
+          </Link>
+        </li>
+        <li className="navbar__item" onClick={closeNavbar}>
+          <Link to="/dashboard" className="navbar__link">
+            Dashboard
+          </Link>
+        </li>
+        <li className="navbar__item" onClick={closeNavbar}>
+          <Link to="/registration" className="navbar__link">
+            Registration
+          </Link>
+        </li>
+        <li className="navbar__item" onClick={closeNavbar}>
+          <Link to="/login" className="navbar__link">
+            Login
           </Link>
         </li>
       </ul>
