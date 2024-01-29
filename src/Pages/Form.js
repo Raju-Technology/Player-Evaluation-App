@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { db, collection, addDoc, getDocs, serverTimestamp, storage, ref, uploadString, getDownloadURL } from "../config";
+import { db, collection, addDoc, getDocs, serverTimestamp, storage, ref, query, uploadString, getDownloadURL, where } from "../config";
 import { v4 as uuidv4 } from 'uuid';
 import Modal from 'react-modal';
 import { useNavigate } from "react-router-dom";
@@ -22,8 +22,8 @@ function Form({ tgAiName }) {
   const [currentLocation, setCurrentLocation] = useState(null);
   const [areaOptions, setAreaOptions] = useState([]);
   const [selectedArea, setSelectedArea] = useState(() => {
-    const storedSelectedArea = localStorage.getItem('selectedArea') || '';
-    return storedSelectedArea;
+  const storedSelectedArea = localStorage.getItem('selectedArea') || '';
+  return storedSelectedArea;
   });
   const [leftValue, setLeftValue] = useState('50%');
   const [isLoading, setIsLoading] = useState(false);
@@ -65,6 +65,14 @@ function Form({ tgAiName }) {
   useEffect(() => {
     const fetchAreaOptions = async () => {
       try {
+        // Check if area options are already in localStorage
+        const storedAreaOptions = JSON.parse(localStorage.getItem('areaOptions'));
+  
+        if (storedAreaOptions) {
+          setAreaOptions(storedAreaOptions);
+          return;
+        }
+        // If not in localStorage, fetch from Firestore
         const areaSnapshot = await getDocs(collection(db, "TgAiAreas"));
         const areaData = areaSnapshot.docs.map(doc => ({ id: doc.id, name: doc.data().name }));
   
@@ -76,6 +84,9 @@ function Form({ tgAiName }) {
         // Sort the sortedAreas based on selection count
         const finalSortedAreas = sortedAreas.sort((a, b) => (selectedAreasCount[b.name] || 0) - (selectedAreasCount[a.name] || 0)).map(area => area.name);
   
+        // Store in localStorage for future use
+        localStorage.setItem('areaOptions', JSON.stringify(finalSortedAreas));
+  
         setAreaOptions(finalSortedAreas);
       } catch (error) {
         console.error("Error fetching area options: ", error);
@@ -85,25 +96,39 @@ function Form({ tgAiName }) {
     fetchAreaOptions();
   }, []);
   
+  
 
   useEffect(() => {
     const fetchFieldOptions = async () => {
       try {
+        // Check if field options are already in localStorage
+        const storedFieldOptions = JSON.parse(localStorage.getItem('fieldOptions'));
+  
+        if (storedFieldOptions) {
+          setFieldOptions(storedFieldOptions);
+          return;
+        }
+  
+        // If not in localStorage, fetch from Firestore
         const fieldSnapshot = await getDocs(collection(db, "TgAiFields"));
         const fields = fieldSnapshot.docs.map(doc => doc.data().name);
-
+  
         const selectedFieldsCount = JSON.parse(localStorage.getItem('selectedFieldsCount')) || {};
-
+  
         const sortedFields = fields.sort((a, b) => (selectedFieldsCount[b] || 0) - (selectedFieldsCount[a] || 0));
-
+  
+        // Store in localStorage for future use
+        localStorage.setItem('fieldOptions', JSON.stringify(sortedFields));
+  
         setFieldOptions(sortedFields);
       } catch (error) {
         console.error("Error fetching field options: ", error);
       }
     };
-
+  
     fetchFieldOptions();
   }, []);
+  
 
   useEffect(() => {
     // Fetch current location
@@ -159,31 +184,30 @@ function Form({ tgAiName }) {
     });
   };
   
-  
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      console.log("Start of handleSubmit");
       setIsLoading(true);
-      const existingDocsQuery = collection(db, "TgAiFormData");
-      const existingDocsSnapshot = await getDocs(existingDocsQuery);
-      const existingDocs = existingDocsSnapshot.docs.map((doc) => doc.data().name.toLowerCase().trim()); // Convert to lowercase and trim spaces
 
-      const trimmedLowercasedName = name.toLowerCase().trim(); // Convert new name to lowercase and trim spaces
-
-      if (existingDocs.includes(trimmedLowercasedName)) {
+      const trimmedLowercasedName = name.toLowerCase().trim();
+  
+      // Check if a document with the given name already exists
+      const TgAiFormDataName = query(collection(db, "TgAiFormData"), where("name", "==", trimmedLowercasedName));
+      const existingDocsSnapshot = await getDocs(TgAiFormDataName);
+  
+      if (!existingDocsSnapshot.empty) {
         // If the name already exists, show an error or handle accordingly
         setDuplicateNameError("Name already exists. Duplicate submission not allowed.");
         setIsErrorMessageVisible(true);
-
+  
         // Hide the error message after 5 seconds (adjust the duration as needed)
         setTimeout(() => {
           setIsErrorMessageVisible(false);
         }, 5000);
         return;
       }
+  
       const generatedID = generateUniqueID();
       const currentDate = new Date();
       const formattedDate = currentDate.toISOString().split('T')[0];
@@ -226,7 +250,7 @@ function Form({ tgAiName }) {
       console.log("Before addDoc");
 
       const docRef = await addDoc(collection(db, "TgAiFormData"), formData);
-      console.log("After addDoc");
+      console.log("After addDOC");
 
       setGeneratedID(generatedID);
       setModalOpen(true);
@@ -378,7 +402,7 @@ function Form({ tgAiName }) {
             <div style={{ color: "red", marginBottom: "20px", marginTop: "-15px" }}>
               {duplicateNameError}
             </div>
-          )}
+         )}
 
         <Modal
           isOpen={isModalOpen}

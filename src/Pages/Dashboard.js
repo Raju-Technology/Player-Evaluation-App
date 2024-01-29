@@ -8,8 +8,9 @@ import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import TextField from '@mui/material/TextField';
+import UpdateForm from "./Updateform";
 // import Button from '@mui/material/Button';
-import { db, collection, getDocs, query, where, updateDoc, doc, addDoc, getDoc, Firestore,FieldValue,deleteField } from '../config';
+import { db, collection, getDocs, query, where, updateDoc, doc, addDoc, getDoc, Firestore,FieldValue,deleteField,orderBy,limit } from '../config';
 
 const { Header, Sider, Content } = Layout;
 const layoutStyle = {
@@ -70,7 +71,28 @@ function Dashboard({tgAiName, access, setTgAiName, setLogin}) {
   const [editableState, setEditableState] = useState([]);
   const [shouldCloseModal, setShouldCloseModal] = useState(true);
   const [activeStep, setActiveStep] = useState(0);
+  const [editFormData, setEditFormData] = useState(null);
+
   const navigate = useNavigate()
+
+  const handleEditClick = (index) => {
+    // Set the data of the selected form item to be edited
+    setEditFormData(formData[index]);
+  };
+
+  const handleUpdate = async (updatedFormData) => {
+    try {
+        const collectionRef = collection(db, 'TgAiFormData');
+
+        const docRef = doc(collectionRef, updatedFormData.Id);
+
+        await updateDoc(docRef, updatedFormData);
+
+        console.log("Document successfully updated!");
+    } catch (error) {
+        console.error("Error updating document: ", error);
+    }
+};
 
   console.log(activeStep)
 
@@ -242,9 +264,15 @@ function Dashboard({tgAiName, access, setTgAiName, setLogin}) {
   useEffect(() => {
     const fetchOptions = async () => {
       try {
-        const q = collection(db, 'TgAiFormData');
+        // Define a query that orders documents by a field and limits the result set
+        const q = query(
+          collection(db, 'TgAiFormData'),
+          orderBy("name"), // Adjust the orderBy clause based on your use case
+          limit(10) // Adjust the limit as needed
+        );
+  
         const dataCollection = await getDocs(q);
-
+  
         if (dataCollection && !dataCollection.empty) {
           const optionsData = dataCollection.docs.map(doc => ({
             value: doc.data().name,
@@ -257,9 +285,9 @@ function Dashboard({tgAiName, access, setTgAiName, setLogin}) {
         console.error("Error fetching options:", error);
       }
     };
-
+  
     fetchOptions();
-  }, []); // Fetch options only once
+  }, []);
 
   const handleSearch = (value) => {
     console.log('handleSearch:', value);
@@ -287,11 +315,13 @@ function Dashboard({tgAiName, access, setTgAiName, setLogin}) {
 
     setSelectedPlace(value); // Set selected place for fetching data
 
-    if (!value) {
+    if (value) {
       try {
-        const q = collection(db, 'TgAiFormData');
+        // If the search value is empty, fetch all documents
+        const q = query(collection(db, 'TgAiFormData'), where("name", ">=", value),
+        where("name", "<", value + "\uf8ff")); // Adjust the orderBy clause based on your use case
         const dataCollection = await getDocs(q);
-
+  
         if (dataCollection && !dataCollection.empty) {
           const optionsData = dataCollection.docs.map(doc => ({
             value: doc.data().name,
@@ -310,11 +340,20 @@ function Dashboard({tgAiName, access, setTgAiName, setLogin}) {
     const fetchData = async () => {
       try {
         let dataCollection;
-        if (selectedPlace === '' && access === "true"){
-          const q = collection(db, 'TgAiFormData')
-          dataCollection = await getDocs(q);
+        const localStorageKey = 'formData'; // Key for local storage
+
+        // Check if data is present in local storage and access is true
+        if (access === 'true' && localStorage.getItem(localStorageKey)) {
+          const cachedData = JSON.parse(localStorage.getItem(localStorageKey));
+          setFormData(cachedData);
+          return;
         }
-        else if (selectedPlace === '') {
+
+        // Fetch data based on conditions
+        if (selectedPlace === '' && access === 'true') {
+          const q = collection(db, 'TgAiFormData');
+          dataCollection = await getDocs(q);
+        } else if (selectedPlace === '') {
           const q = query(collection(db, 'TgAiFormData'), where('selectedCreatedBy', '==', tgAiName));
           dataCollection = await getDocs(q);
         } else {
@@ -325,16 +364,59 @@ function Dashboard({tgAiName, access, setTgAiName, setLogin}) {
         if (dataCollection && !dataCollection.empty) {
           const data = dataCollection.docs.map(doc => ({ ...doc.data(), Id: doc.id, editable: false }));
           setFormData(data);
+
+          // Store data in local storage
+          localStorage.setItem(localStorageKey, JSON.stringify(data));
         } else {
           setFormData([]);
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error('Error fetching data:', error);
       }
     };
 
     fetchData();
-  }, [selectedPlace]);
+  }, [selectedPlace, access, tgAiName]);useEffect(() => {
+    const fetchData = async () => {
+      try {
+        let dataCollection;
+        const localStorageKey = 'formData'; // Key for local storage
+
+        // Check if data is present in local storage and access is true
+        if (access === 'true' && localStorage.getItem(localStorageKey)) {
+          const cachedData = JSON.parse(localStorage.getItem(localStorageKey));
+          setFormData(cachedData);
+          return;
+        }
+
+        // Fetch data based on conditions
+        if (selectedPlace === '' && access === 'true') {
+          const q = collection(db, 'TgAiFormData');
+          dataCollection = await getDocs(q);
+        } else if (selectedPlace === '') {
+          const q = query(collection(db, 'TgAiFormData'), where('selectedCreatedBy', '==', tgAiName));
+          dataCollection = await getDocs(q);
+        } else {
+          const q = query(collection(db, 'TgAiFormData'), where('name', '==', selectedPlace));
+          dataCollection = await getDocs(q);
+        }
+
+        if (dataCollection && !dataCollection.empty) {
+          const data = dataCollection.docs.map(doc => ({ ...doc.data(), Id: doc.id, editable: false }));
+          setFormData(data);
+
+          // Store data in local storage
+          localStorage.setItem(localStorageKey, JSON.stringify(data));
+        } else {
+          setFormData([]);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, [selectedPlace, access, tgAiName]);
 
   const handleEditAddress = (index,e) => {
     const updatedData = formData.map((data, i) => ({
@@ -546,6 +628,9 @@ function Dashboard({tgAiName, access, setTgAiName, setLogin}) {
 
   return (
     <div>
+      {editFormData ? (
+        <UpdateForm formData={editFormData} onUpdate={handleUpdate} setEditFormData={setEditFormData} />
+      ): (
       <Space  direction="vertical" style={{ width: '100%' }} >
         <Layout>
           <Header style={headerStyle}>
@@ -632,9 +717,8 @@ function Dashboard({tgAiName, access, setTgAiName, setLogin}) {
                     <h5>Description</h5>
                     {formData.map((data, index) => (
                       <div key={index} className="data-container">
-                        <div className="data-inner-container">
-                        <p>{data.details}</p>
-                        </div>
+                        {/* <p>{data.name}</p> */}
+                        <button onClick={() => handleEditClick(index)}>Edit</button>
                       </div>
                     ))}
                   </div>
@@ -722,7 +806,6 @@ function Dashboard({tgAiName, access, setTgAiName, setLogin}) {
                         </>
                       )}
                     </Modal>
-
                   </>
                 )} 
 
@@ -831,6 +914,7 @@ function Dashboard({tgAiName, access, setTgAiName, setLogin}) {
           </Layout>
         </Layout>
       </Space>
+      )}
     </div>
   );
 }

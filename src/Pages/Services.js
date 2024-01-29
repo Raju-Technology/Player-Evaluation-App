@@ -124,6 +124,22 @@ function Service() {
             </div>
           ))}
         </div>
+        <div className="description-container">
+          <h4>description</h4>
+          {formData.map((data, index) => (
+            <div key={index} className="service-container">
+              <p>{data.details}</p>
+            </div>
+          ))}
+        </div>
+        <div className="description-container">
+          <h4>Specialization</h4>
+          {formData.map((data, index) => (
+            <div key={index} className="service-container">
+              <p>{JSON.stringify(data.specialization)}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

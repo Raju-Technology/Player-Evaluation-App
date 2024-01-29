@@ -757,7 +757,11 @@ hr {
 }
 
 .name-container{
-  width: 40%;
+  width: 30%;
+}
+
+.description-container{
+  width: 30%;
 }
 
 .service-count{
