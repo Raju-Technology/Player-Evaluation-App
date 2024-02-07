@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Service from "./Services";
-import { Layout, Space, AutoComplete, Input, Tooltip ,Button, Modal, } from 'antd';
+import Settings from "./Settings";
+import { Layout, Space, AutoComplete, Input, Tooltip , Modal, } from 'antd';
 import { EditOutlined, RightOutlined, DeleteOutlined } from '@ant-design/icons';
 import Box from '@mui/material/Box';
 import Stepper from '@mui/material/Stepper';
@@ -9,7 +10,9 @@ import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import TextField from '@mui/material/TextField';
 import UpdateForm from "./Updateform";
-// import Button from '@mui/material/Button';
+import Button from '@mui/material/Button';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { db, collection, getDocs, query, where, updateDoc, doc, addDoc, getDoc, Firestore,FieldValue,deleteField,orderBy,limit } from '../config';
 
 const { Header, Sider, Content } = Layout;
@@ -72,6 +75,39 @@ function Dashboard({tgAiName, access, setTgAiName, setLogin}) {
   const [shouldCloseModal, setShouldCloseModal] = useState(true);
   const [activeStep, setActiveStep] = useState(0);
   const [editFormData, setEditFormData] = useState(null);
+  const [dataCount, setDataCount] = useState(0);
+
+  const theme = createTheme({
+    components: {
+      MuiButton: {
+        styleOverrides: {
+          contained: {
+            backgroundColor: '#526681',
+            width: '125px',
+            color: 'white',
+            '&:hover': {
+              backgroundColor: '#1565c0', // Change color on hover if needed
+            },
+          },
+        },
+      },
+    },
+  });
+
+  console.log("dataCount : " + dataCount )
+
+  useEffect(() => {
+    fetchDataCount(); // Fetch data count when component mounts
+  }, []);
+
+  const fetchDataCount = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, 'TgAiFormData')); // Query to get all documents in the collection
+      setDataCount(querySnapshot.size); // Set data count to the number of documents
+    } catch (error) {
+      console.error('Error fetching data count:', error);
+    }
+  };
 
   const navigate = useNavigate()
 
@@ -262,13 +298,60 @@ function Dashboard({tgAiName, access, setTgAiName, setLogin}) {
   };
 
   useEffect(() => {
-    const fetchOptions = async () => {
-      try {
-        // Define a query that orders documents by a field and limits the result set
+    fetchOptions(); // Fetch initial options
+  }, []);
+
+  const fetchOptions = async () => {
+    try {
+      // Define a query that orders documents by a field and limits the result set
+      const q = query(
+        collection(db, 'TgAiFormData'),
+        limit(10)// Adjust the limit as needed
+      );
+
+      const dataCollection = await getDocs(q);
+
+      if (dataCollection && !dataCollection.empty) {
+        const optionsData = dataCollection.docs.map(doc => ({
+          value: doc.data().name,
+        }));
+        setDataSource(optionsData);
+      } else {
+        setDataSource([]);
+      }
+    } catch (error) {
+      console.error("Error fetching options:", error);
+    }
+  };
+
+  const handleSearch = (value) => {
+    console.log('handleSearch:', value);
+    if (value === '') {
+      fetchOptions(); // Fetch initial options when the search value is empty
+    } else {
+      const filteredOptions = dataSource.filter(option =>
+        option.value.toLowerCase().includes(value.toLowerCase())
+      );
+      setDataSource(filteredOptions);
+    }
+  };
+
+  const handleSelect = (value) => {
+    setSelectedPlace(value || ''); // Set selected place
+  };
+
+  const handleSearchChange = async (value) => {
+    console.log('handleSearchChange:', value);
+  
+    setSelectedPlace(value); // Set selected place for fetching data
+  
+    try {
+      if (value) {
+        // Adjust the orderBy clause based on your use case
         const q = query(
           collection(db, 'TgAiFormData'),
-          orderBy("name"), // Adjust the orderBy clause based on your use case
-          limit(10) // Adjust the limit as needed
+          where("name", ">=", value),
+          where("name", "<", value + "\uf8ff")
         );
   
         const dataCollection = await getDocs(q);
@@ -281,58 +364,12 @@ function Dashboard({tgAiName, access, setTgAiName, setLogin}) {
         } else {
           setDataSource([]);
         }
-      } catch (error) {
-        console.error("Error fetching options:", error);
+      } else {
+        // Fetch initial options when the search value is empty
+        fetchOptions();
       }
-    };
-  
-    fetchOptions();
-  }, []);
-
-  const handleSearch = (value) => {
-    console.log('handleSearch:', value);
-    if (value === '') {
-      setDataSource([]);
-      return;
-    }
-
-    const filteredOptions = dataSource.filter((option) =>
-      option.value.toLowerCase().includes(value.toLowerCase())
-    );
-    setDataSource(filteredOptions);
-  };
-
-  const handleSelect = (value) => {
-    if (!value) {
-      setSelectedPlace('');
-    } else {
-      setSelectedPlace(value);
-    }
-  };
-
-  const handleSearchChange = async (value) => {
-    console.log('handleSearchChange:', value);
-
-    setSelectedPlace(value); // Set selected place for fetching data
-
-    if (value) {
-      try {
-        // If the search value is empty, fetch all documents
-        const q = query(collection(db, 'TgAiFormData'), where("name", ">=", value),
-        where("name", "<", value + "\uf8ff")); // Adjust the orderBy clause based on your use case
-        const dataCollection = await getDocs(q);
-  
-        if (dataCollection && !dataCollection.empty) {
-          const optionsData = dataCollection.docs.map(doc => ({
-            value: doc.data().name,
-          }));
-          setDataSource(optionsData);
-        } else {
-          setDataSource([]);
-        }
-      } catch (error) {
-        console.error("Error fetching options:", error);
-      }
+    } catch (error) {
+      console.error("Error fetching options:", error);
     }
   };
 
@@ -348,47 +385,6 @@ function Dashboard({tgAiName, access, setTgAiName, setLogin}) {
           setFormData(cachedData);
           return;
         }
-
-        // Fetch data based on conditions
-        if (selectedPlace === '' && access === 'true') {
-          const q = collection(db, 'TgAiFormData');
-          dataCollection = await getDocs(q);
-        } else if (selectedPlace === '') {
-          const q = query(collection(db, 'TgAiFormData'), where('selectedCreatedBy', '==', tgAiName));
-          dataCollection = await getDocs(q);
-        } else {
-          const q = query(collection(db, 'TgAiFormData'), where('name', '==', selectedPlace));
-          dataCollection = await getDocs(q);
-        }
-
-        if (dataCollection && !dataCollection.empty) {
-          const data = dataCollection.docs.map(doc => ({ ...doc.data(), Id: doc.id, editable: false }));
-          setFormData(data);
-
-          // Store data in local storage
-          localStorage.setItem(localStorageKey, JSON.stringify(data));
-        } else {
-          setFormData([]);
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    fetchData();
-  }, [selectedPlace, access, tgAiName]);useEffect(() => {
-    const fetchData = async () => {
-      try {
-        let dataCollection;
-        const localStorageKey = 'formData'; // Key for local storage
-
-        // Check if data is present in local storage and access is true
-        if (access === 'true' && localStorage.getItem(localStorageKey)) {
-          const cachedData = JSON.parse(localStorage.getItem(localStorageKey));
-          setFormData(cachedData);
-          return;
-        }
-
         // Fetch data based on conditions
         if (selectedPlace === '' && access === 'true') {
           const q = collection(db, 'TgAiFormData');
@@ -524,7 +520,7 @@ function Dashboard({tgAiName, access, setTgAiName, setLogin}) {
 
     setSelectedSpecializationIndex(index);
     setModalVisible(true);
-  };
+   };
 
   const handleInputChangeSpecialization = (index, e) => {
     const updatedEditableSpecialization = {
@@ -541,46 +537,52 @@ function Dashboard({tgAiName, access, setTgAiName, setLogin}) {
   };
 
   const handleSaveSpecialization = async (index) => {
-    const editedItem = formData[index];
+  const editedItem = formData[index];
   
-    try {
-      const docRef = doc(db, 'TgAiFormData', editedItem.Id);
+  try {
+    const docRef = doc(db, 'TgAiFormData', editedItem.Id);
+    
+    // Get the current date in the specified format (YYYY-MM-DD)
+    const currentDate = new Date();
+    const formattedDate = currentDate.toISOString().split('T')[0];
+
+    // Update the specialization and createdAt fields in Firestore
+    await updateDoc(docRef, {
+      specialization: editableSpecialization[index],
+      modifiedAt: formattedDate, // Update createdAt to current date
+      // Add other fields you want to update
+    });
+    
+    // Fetch the updated data from Firestore
+    const updatedDoc = await getDoc(docRef);
+    const updatedData = { ...updatedDoc.data(), Id: updatedDoc.id, editable: false };
   
-      // Update the specialization in Firestore
-      await updateDoc(docRef, {
-        specialization: editableSpecialization[index],
-        // Add other fields you want to update
-      });
+    // Update the state with the fetched data
+    setFormData((prevData) => {
+      const newData = [...prevData];
+      newData[index] = updatedData;
+      return newData;
+    });
+    
+    // Reset the editableSpecialization for the specific index
+    setEditableSpecialization((prevEditableSpecialization) => {
+      const newEditableSpecialization = { ...prevEditableSpecialization };
+      delete newEditableSpecialization[index];
+      return newEditableSpecialization;
+    });
   
-      // Fetch the updated data from Firestore
-      const updatedDoc = await getDoc(docRef);
-      const updatedData = { ...updatedDoc.data(), Id: updatedDoc.id, editable: false };
+    const updatedEditableState = editableState.map(() => false);
+    setEditableState(updatedEditableState);
   
-      // Update the state with the fetched data
-      setFormData((prevData) => {
-        const newData = [...prevData];
-        newData[index] = updatedData;
-        return newData;
-      });
+    setModalVisible(false);
+    setSelectedSpecializationIndex(null);
   
-      // Reset the editableSpecialization for the specific index
-      setEditableSpecialization((prevEditableSpecialization) => {
-        const newEditableSpecialization = { ...prevEditableSpecialization };
-        delete newEditableSpecialization[index];
-        return newEditableSpecialization;
-      });
-  
-      const updatedEditableState = editableState.map(() => false);
-      setEditableState(updatedEditableState);
-  
-      setModalVisible(false);
-      setSelectedSpecializationIndex(null);
-  
-      console.log("Document Successfully Updated!");
-    } catch (error) {
-      console.error("Error Updating Document: ", error);
-    }
-  };
+    console.log("Document Successfully Updated!");
+  } catch (error) {
+    console.error("Error Updating Document: ", error);
+  }
+};
+
 
   useEffect(() => {
     const modalElement = document.getElementById("your-unique-modal-id"); // replace with your modal ID
@@ -589,8 +591,7 @@ function Dashboard({tgAiName, access, setTgAiName, setLogin}) {
       modalElement.addEventListener("touchstart", (e) => {
         e.stopPropagation();
       });
-    }
-  
+    } 
     // Clean up the event listener when the component unmounts
     return () => {
       if (modalElement) {
@@ -638,14 +639,17 @@ function Dashboard({tgAiName, access, setTgAiName, setLogin}) {
               style={{ width: window.innerWidth <= 768 ? 150 : 600 }}
               options={dataSource}
               onSelect={handleSelect}
-              onSearch={(value) => handleSearch(value)}
+              onSearch={handleSearch}
               onChange={handleSearchChange}
             >
               <Input.Search placeholder="Search Places" />
             </AutoComplete>
             <div>
                <p style={paragraphStyle}>Logged in as : {tgAiName}</p>
-               <button onClick={handleLogout}>Logout</button>
+               <ThemeProvider theme={theme}>
+                   <Button variant="contained"  onClick={handleLogout}>Logout</Button>
+               </ThemeProvider>
+               
             </div>
           </Header>
           {window.innerWidth <= 768 && (
@@ -717,8 +721,9 @@ function Dashboard({tgAiName, access, setTgAiName, setLogin}) {
                     <h5>Description</h5>
                     {formData.map((data, index) => (
                       <div key={index} className="data-container">
-                        {/* <p>{data.name}</p> */}
-                        <button onClick={() => handleEditClick(index)}>Edit</button>
+                       <ThemeProvider theme={theme}>
+                        <Button variant="contained" onClick={() => handleEditClick(index)}>Edit</Button>
+                      </ThemeProvider>
                       </div>
                     ))}
                   </div>
@@ -727,13 +732,14 @@ function Dashboard({tgAiName, access, setTgAiName, setLogin}) {
                       {formData.map((data, index) => (
                         <div key={index} className="data-container editable-container">
                           <div className="data-inner-container">
-                            <Button
-                              type="text"
-                              onClick={() => handleEditSpecialization(index)}
-                              style={{ cursor: 'pointer', marginLeft: '3' }}
-                            >
-                              Click Here
-                            </Button>
+                            <ThemeProvider theme={theme}>
+                              <Button
+                                variant="contained"
+                                onClick={() => handleEditSpecialization(index)}
+                              >
+                                Click Here
+                              </Button>
+                            </ThemeProvider>
                           </div>
                         </div>
                       ))}
@@ -744,7 +750,7 @@ function Dashboard({tgAiName, access, setTgAiName, setLogin}) {
                       open={modalVisible}
                       onCancel={handleModalCancel}
                       footer={[
-                        <Button key="save" type="primary" onClick={() => handleSaveSpecialization(selectedSpecializationIndex)} style={{backgroundColor: '#526681'}}>
+                        <Button key="save" type="primary" onClick={() => handleSaveSpecialization(selectedSpecializationIndex)} style={{backgroundColor: '#526681', color: '#fff'}}>
                           Save
                         </Button>,
                       ]}
@@ -789,7 +795,9 @@ function Dashboard({tgAiName, access, setTgAiName, setLogin}) {
                                   }
                                 }}  // Prevent mouse move when modal should stay open
                               />
-                              <Button type="text" danger icon={<DeleteOutlined />} onClick={() => handleDeleteSpecialization(selectedSpecializationIndex, key)} style={{ marginLeft: '5px' }} />
+                              <Button variant="outlined" startIcon={<DeleteIcon />} onClick={() => handleDeleteSpecialization(selectedSpecializationIndex, key)} style={{ marginLeft: '5px', backgroundColor: '#526681', color:'#fff' }} >
+                                Delete
+                              </Button>
                             </div>
                           ))}
                           <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px', flexDirection: 'column' }}>
@@ -799,7 +807,7 @@ function Dashboard({tgAiName, access, setTgAiName, setLogin}) {
                               value={newSpecialization}
                               onChange={(e) => setNewSpecialization(e.target.value)}
                             />
-                            <Button type="primary" onClick={handleAddNewSpecialization} style={{ marginTop: '5px', backgroundColor: '#526681', marginRight:'auto' }}>  {/* Add margin-top to the Button */}
+                            <Button type="primary" onClick={handleAddNewSpecialization} style={{ marginTop: '5px', backgroundColor: '#526681', marginRight:'auto', color:'#fff' }}>  {/* Add margin-top to the Button */}
                               Add New Specialization
                             </Button>
                           </div>
@@ -910,7 +918,13 @@ function Dashboard({tgAiName, access, setTgAiName, setLogin}) {
               <Content style={contentStyle}>
                   <Service tgAiName={tgAiName}/>
               </Content>
-            )}
+            )}{
+              selectedSideContent === 'Settings' && (
+                <Content style={contentStyle}>
+                  <Settings />
+                </Content>
+              )
+            }
           </Layout>
         </Layout>
       </Space>

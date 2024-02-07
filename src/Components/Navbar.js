@@ -49,11 +49,11 @@ function Navbar() {
             Dashboard
           </Link>
         </li>
-        <li className="navbar__item" onClick={closeNavbar}>
+        {/* <li className="navbar__item" onClick={closeNavbar}>
           <Link to="/registration" className="navbar__link">
             Registration
           </Link>
-        </li>
+        </li> */}
         <li className="navbar__item" onClick={closeNavbar}>
           <Link to="/login" className="navbar__link">
             Login

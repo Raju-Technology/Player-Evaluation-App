@@ -89,10 +89,10 @@ function Login({ setLogin, setTgAiName, setAccess }) {
           />
         </div>
         <button type="submit">Login</button>
-        <hr />
+        {/* <hr />
         <div className="new-user-button">
           <Link to="/registration">New User</Link>
-        </div>
+        </div> */}
       </form>
     </div>
   );

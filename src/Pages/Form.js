@@ -12,6 +12,7 @@ function Form({ tgAiName }) {
   const [address, setAddress] = useState('');
   const [details, setDetails] = useState('');
   const [specialization, setSpecialization] = useState('');
+  const [source, setSource] = useState('');
   const [timings, setTimings] = useState('');
   const [isModalOpen, setModalOpen] = useState(false);
   const [generatedID, setGeneratedID] = useState(null);
@@ -21,14 +22,17 @@ function Form({ tgAiName }) {
   const [image, setImage] = useState(null);
   const [currentLocation, setCurrentLocation] = useState(null);
   const [areaOptions, setAreaOptions] = useState([]);
+  const [ratings, setRatings] = useState('');
   const [selectedArea, setSelectedArea] = useState(() => {
-  const storedSelectedArea = localStorage.getItem('selectedArea') || '';
-  return storedSelectedArea;
+    const storedSelectedArea = localStorage.getItem('selectedArea') || '';
+    return storedSelectedArea;
   });
   const [leftValue, setLeftValue] = useState('50%');
   const [isLoading, setIsLoading] = useState(false);
   const [duplicateNameError, setDuplicateNameError] = useState(null);
   const [isErrorMessageVisible, setIsErrorMessageVisible] = useState(false);
+
+  console.log(ratings)
 
   const customStyles = {
     content: {
@@ -212,6 +216,22 @@ function Form({ tgAiName }) {
       const currentDate = new Date();
       const formattedDate = currentDate.toISOString().split('T')[0];
 
+      let ratingRupees;
+
+      if (parseInt(ratings) === 1) {
+          ratingRupees = "100 Rupees";
+      } else if (parseInt(ratings) === 2) {
+          ratingRupees = "500 Rupees";
+      } else if (parseInt(ratings) === 3) {
+          ratingRupees = "1000 Rupees";
+      } else if (parseInt(ratings) === 4) {
+          ratingRupees = "10000 Rupees";
+      } else if (parseInt(ratings) === 5) {
+          ratingRupees = "100000 Rupees";
+      } else {
+          ratingRupees = 0; 
+      }
+
       let formData = {
         id: generatedID,
         name,
@@ -224,6 +244,8 @@ function Form({ tgAiName }) {
         selectedCreatedBy: tgAiName,
         createdAt: formattedDate,
         selectedArea,
+        source,
+        ratings: ratingRupees
       };
       console.log("Before if (image)");
 
@@ -264,6 +286,8 @@ function Form({ tgAiName }) {
       setSelectedField('');
       setImage(null);
       setSelectedArea('');
+      setSource('');
+      setRatings('');
     } catch (error) {
       console.error("Error adding document: ", error);
     }
@@ -394,6 +418,30 @@ function Form({ tgAiName }) {
             value={specialization}
             className="form-control"
             onChange={(e) => setSpecialization(e.target.value)}
+          />
+        </div>
+        <div className="form-group">
+            <label htmlFor="ratings">Price:</label>
+            <div className="star-rating">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <span
+                  key={star}
+                  className={star <= parseInt(ratings) ? 'star filled' : 'star'}
+                  onClick={() => setRatings(star.toString())}
+                >
+                  &#9733;
+                </span>
+              ))}
+            </div>
+         </div>
+        <div className="form-group">
+          <label htmlFor="name">Source</label>
+          <input
+            type="text"
+            id="source"
+            value={source}
+            className="form-control"
+            onChange={(e) => setName(e.target.value)}
           />
         </div>
 
