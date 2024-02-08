@@ -299,6 +299,7 @@ function Service() {
             </div>
           ))}
         </div>
+
         <div className="description-container">
           <h4>Specialization</h4>
           {formData.map((data, index) => (
@@ -309,6 +310,28 @@ function Service() {
             </div>
           ))}
         </div>
+        <div className="address-container">
+          <h4>Address</h4>
+          {formData.map((data, index) => (
+            <div key={index} className="service-container">
+              <div className="data-inner-container">
+                 <p>{data.address}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="mobile-container">
+          <h4>Mobile</h4>
+          {formData.map((data, index) => (
+            <div key={index} className="service-container">
+              <div className="data-inner-container">
+                 <p>{data.phone}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+    
+
         <div className="status-container">
           <h4>Status</h4>
           {formData.map((data, index) => (
