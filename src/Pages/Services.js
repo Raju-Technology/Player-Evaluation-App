@@ -329,6 +329,29 @@ function Service() {
             </div>
           ))}
         </div>
+
+        <div className="verified-container">
+          <h4>Verified</h4>
+          {formData.map((data, index) => (
+            <div key={index} className="service-container">
+              <div className="data-inner-container">
+                 <p>{data.verified ? "true" : "false"}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="comment-container">
+          <h4>Comment</h4>
+          {formData.map((data, index) => (
+            <div key={index} className="service-container">
+              <div className="data-inner-container">
+                 <p>{data.comment}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
         <div className="status-container">
           <h4>Status</h4>
           {formData.map((data, index) => (
