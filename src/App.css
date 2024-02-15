@@ -795,28 +795,36 @@ hr {
 }
 
 .name-container{
-  width: 12%;
+  width: 10%;
 }
 
 .description-container{
-  width: 17%;
+  width: 15%;
 }
 
 .phone-container{
-width: 10%;
+width: 8%;
 }
 
 .address-container{
-width: 15%;
+width: 10%;
 }
 
+
+.verified-container{
+width: 6%;
+}
+
+.comment-container{
+  width: 10%;
+}
 .status-container{
-  width: 13%;
+  width: 10%;
 }
 
 
 .reviewed-container{
-  width: 10%;
+  width: 8%;
 }
 
 .service-count{
