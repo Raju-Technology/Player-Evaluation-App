@@ -10,6 +10,8 @@ function UpdateForm({ formData, onUpdate , setEditFormData}) {
   const [details, setDetails] = useState("");
   const [specialization, setSpecialization] = useState("");
   const [geoLocation, setGeoLocation] = useState(null);
+  const [comment, setComment] = useState("");
+  const [verified, setVerified] = useState(false);
 
   // Populate form fields with the data of the selected form item
   useEffect(() => {
@@ -22,6 +24,7 @@ function UpdateForm({ formData, onUpdate , setEditFormData}) {
       setTimings(formData.timings);
       setAddress(formData.address);
       setDetails(formData.details);
+      setComment(formData.comment);
       setSpecialization(JSON.stringify(formData.specialization || {}));
       setGeoLocation(formData.geoLocation || null);
     }
@@ -60,6 +63,8 @@ function UpdateForm({ formData, onUpdate , setEditFormData}) {
       details,
       specialization: JSON.parse(specialization),
       geoLocation: locationData, // Include geolocation data
+      comment,
+      verified
     };
 
     // Pass the updated data back to the parent component
@@ -68,20 +73,20 @@ function UpdateForm({ formData, onUpdate , setEditFormData}) {
   };
 
   return (
-    <div>
+    <div className="updateform">
       <form onSubmit={handleSubmit} className="registration-form">
         {/* Form fields */}
-        <div className="form-group">
+        <div className="updateform-group">
           <label htmlFor="area">Area:</label>
           <input
-            type="text"
+            type="text"x
             id="area"
             value={selectedArea}
             className="form-control"
             onChange={(e) => setSelectedArea(e.target.value)}
           />
         </div>
-        <div className="form-group">
+        <div className="updateform-group">
           <label htmlFor="field">Field:</label>
           <input
             type="text"
@@ -91,7 +96,7 @@ function UpdateForm({ formData, onUpdate , setEditFormData}) {
             onChange={(e) => setSelectedField(e.target.value)}
           />
         </div>
-        <div className="form-group">
+        <div className="updateform-group">
           <label htmlFor="name">Name of the Business/Event</label>
           <input
             type="text"
@@ -101,7 +106,7 @@ function UpdateForm({ formData, onUpdate , setEditFormData}) {
             onChange={(e) => setName(e.target.value)}
           />
         </div>
-        <div className="form-group">
+        <div className="updateform-group">
           <label htmlFor="phone">Contact Name and Number:</label>
           <input
             type="text"
@@ -111,7 +116,7 @@ function UpdateForm({ formData, onUpdate , setEditFormData}) {
             onChange={(e) => setPhone(e.target.value)}
           />
         </div>
-        <div className="form-group">
+        <div className="updateform-group">
           <label htmlFor="timings">Available Timings:</label>
           <input
             type="text"
@@ -121,7 +126,7 @@ function UpdateForm({ formData, onUpdate , setEditFormData}) {
             onChange={(e) => setTimings(e.target.value)}
           />
         </div>
-        <div className="form-group">
+        <div className="updateform-group">
           <label htmlFor="address">Address:</label>
           <textarea
             id="address"
@@ -130,7 +135,7 @@ function UpdateForm({ formData, onUpdate , setEditFormData}) {
             onChange={(e) => setAddress(e.target.value)}
           />
         </div>
-        <div className="form-group">
+        <div className="updateform-group">
           <label htmlFor="details">Service Description:</label>
           <textarea
             id="details"
@@ -139,7 +144,7 @@ function UpdateForm({ formData, onUpdate , setEditFormData}) {
             onChange={(e) => setDetails(e.target.value)}
           />
         </div>
-        <div className="form-group">
+        <div className="updateform-group">
           <label htmlFor="specialization">Specialization:</label>
           <input
             type="text"
@@ -149,7 +154,7 @@ function UpdateForm({ formData, onUpdate , setEditFormData}) {
             onChange={(e) => setSpecialization(e.target.value)}
           />
         </div>
-        <div className="form-group">
+        <div className="updateform-group">
           <label htmlFor="geoLocation">Geolocation:</label>
           <input
             type="text"
@@ -159,6 +164,16 @@ function UpdateForm({ formData, onUpdate , setEditFormData}) {
             readOnly
           />
         </div>
+        <div className="updateform-group">
+          <label htmlFor="comment">Comment:</label> {/* Step 2: Add comment label */}
+          <textarea
+            id="comment"
+            value={comment} 
+            className="form-control"
+            onChange={(e) => setComment(e.target.value)} 
+          />
+        </div>
+        <button type="button" onClick={() => setVerified(true)} className="verification">Verify</button>
         <button type="submit">Update form</button>
       </form>
     </div>

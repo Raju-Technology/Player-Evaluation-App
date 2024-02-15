@@ -13,7 +13,7 @@ import UpdateForm from "./Updateform";
 import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { db, collection, getDocs, query, where, updateDoc, doc, addDoc, getDoc, Firestore,FieldValue,deleteField,orderBy,limit } from '../config';
+import { db, collection, getDocs, query, where, updateDoc, doc, addDoc, getDoc, Firestore,FieldValue,deleteField,orderBy,limit,onSnapshot } from '../config';
 
 const { Header, Sider, Content } = Layout;
 const layoutStyle = {
@@ -374,45 +374,39 @@ function Dashboard({tgAiName, access, setTgAiName, setLogin}) {
   };
 
   useEffect(() => {
+    const localStorageKey = 'formData';
+
     const fetchData = async () => {
-      try {
-        let dataCollection;
-        const localStorageKey = 'formData'; // Key for local storage
+        try {
+            // Check if data is present in local storage and access is true
+            if (access === 'true' && localStorage.getItem(localStorageKey)) {
+                const cachedData = JSON.parse(localStorage.getItem(localStorageKey));
+                setFormData(cachedData);
+            } else {
+                let q;
+                if (selectedPlace === '' && access === 'true') {
+                    q = collection(db, 'TgAiFormData');
+                } else if (selectedPlace === '') {
+                    q = query(collection(db, 'TgAiFormData'), where('selectedCreatedBy', '==', tgAiName));
+                } else {
+                    q = query(collection(db, 'TgAiFormData'), where('name', '==', selectedPlace));
+                }
 
-        // Check if data is present in local storage and access is true
-        if (access === 'true' && localStorage.getItem(localStorageKey)) {
-          const cachedData = JSON.parse(localStorage.getItem(localStorageKey));
-          setFormData(cachedData);
-          return;
-        }
-        // Fetch data based on conditions
-        if (selectedPlace === '' && access === 'true') {
-          const q = collection(db, 'TgAiFormData');
-          dataCollection = await getDocs(q);
-        } else if (selectedPlace === '') {
-          const q = query(collection(db, 'TgAiFormData'), where('selectedCreatedBy', '==', tgAiName));
-          dataCollection = await getDocs(q);
-        } else {
-          const q = query(collection(db, 'TgAiFormData'), where('name', '==', selectedPlace));
-          dataCollection = await getDocs(q);
-        }
+                const unsubscribe = onSnapshot(q, (snapshot) => {
+                    const data = snapshot.docs.map(doc => ({ ...doc.data(), Id: doc.id, editable: false }));
+                    setFormData(data);
+                    localStorage.setItem(localStorageKey, JSON.stringify(data));
+                });
 
-        if (dataCollection && !dataCollection.empty) {
-          const data = dataCollection.docs.map(doc => ({ ...doc.data(), Id: doc.id, editable: false }));
-          setFormData(data);
-
-          // Store data in local storage
-          localStorage.setItem(localStorageKey, JSON.stringify(data));
-        } else {
-          setFormData([]);
+                return () => unsubscribe();
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
         }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
     };
 
     fetchData();
-  }, [selectedPlace, access, tgAiName]);
+}, [selectedPlace, access, tgAiName]);
 
   const handleEditAddress = (index,e) => {
     const updatedData = formData.map((data, i) => ({
@@ -908,6 +902,14 @@ function Dashboard({tgAiName, access, setTgAiName, setLogin}) {
                         )}
                       </div>
                     ))}
+                  </div>
+                  <div className="verification-container">
+                      <h5>Verified</h5>
+                      {formData.map((data, index) => (
+                          <div key={index} className="data-container">
+                              <p>{data.verified?.toString() || "false"}</p>
+                          </div>
+                      ))}
                   </div>
                   </>
                 )}

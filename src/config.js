@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, Firestore,FieldValue,deleteField, collection, addDoc, getDocs, where, query, updateDoc, doc, getDoc, serverTimestamp, orderBy, limit } from "firebase/firestore";
+import { getFirestore, Firestore,FieldValue,deleteField, collection, addDoc, getDocs, where, query, updateDoc, doc, getDoc, serverTimestamp, orderBy, limit, onSnapshot } from "firebase/firestore";
 import { getStorage, ref, uploadString, getDownloadURL } from "firebase/storage"; // Add this import
 
 const firebaseConfig = {
@@ -16,4 +16,4 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const storage = getStorage(app); // Add this line
 
-export { db, storage, Firestore,FieldValue,deleteField,orderBy, collection, addDoc, getDocs, where, query, updateDoc, doc, getDoc, serverTimestamp, ref, uploadString, getDownloadURL,limit,  };
+export { db, storage, Firestore,FieldValue,deleteField,orderBy, collection, addDoc, getDocs, where, query, updateDoc, doc, getDoc, serverTimestamp, ref, uploadString, getDownloadURL,limit,onSnapshot  };

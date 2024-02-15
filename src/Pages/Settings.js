@@ -18,7 +18,7 @@ function Settings() {
                 const usersQuerySnapshot = await getDocs(collection(db, "TgAiUsers"));
                 const usernamesArray = usersQuerySnapshot.docs.map(doc => doc.data().name);
                 setUsernames(usernamesArray);
-
+        
                 // Fetch data from TgAiFormData and calculate counts for each user
                 const counts = {};
                 for (const username of usernamesArray) {
@@ -27,27 +27,31 @@ function Settings() {
                         where("selectedCreatedBy", "==", username)
                     );
                     const formDataQuerySnapshot = await getDocs(formDataQuery);
-
+        
                     let totalCount = formDataQuerySnapshot.size;
                     let approvedCount = 0;
                     let rejectedCount = 0;
-
+                    let underReviewCount = 0; // Initialize count for "Under Review" status
+        
                     formDataQuerySnapshot.forEach((doc) => {
                         const status = doc.data().status;
                         if (status === "Approved") {
                             approvedCount++;
                         } else if (status === "Rejected") {
                             rejectedCount++;
+                        } else if (status !== "Deleted") {
+                            underReviewCount++; // Increment count for "Under Review" status
                         }
                     });
-
-                    counts[username] = { totalCount, approvedCount, rejectedCount };
+        
+                    counts[username] = { totalCount, approvedCount, rejectedCount, underReviewCount };
                 }
                 setUserCounts(counts);
             } catch (error) {
                 console.error("Error fetching documents: ", error);
             }
         };
+        
 
         fetchData();
 
@@ -97,6 +101,14 @@ function Settings() {
                     <ul style={{ listStyleType: "none", padding: 0 }}>
                         {sortedUsernames.map((username, index) => (
                             <li key={index} style={{ textAlign: "center", marginBottom: "15px" }}>{userCounts[username]?.rejectedCount}</li>
+                        ))}
+                    </ul>
+                </div>
+                <div style={{ width: "150px", marginLeft: "20px" }}>
+                    <h3 style={{ textAlign: "center" }}>Under Review</h3>
+                    <ul style={{ listStyleType: "none", padding: 0 }}>
+                        {sortedUsernames.map((username, index) => (
+                            <li key={index} style={{ textAlign: "center", marginBottom: "15px" }}>{userCounts[username]?.underReviewCount}</li>
                         ))}
                     </ul>
                 </div>
